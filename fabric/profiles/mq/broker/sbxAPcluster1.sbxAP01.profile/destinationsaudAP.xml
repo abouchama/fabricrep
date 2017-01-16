@@ -1,0 +1,6 @@
+<destinations>
+	<queue physicalName="ActiveMQ.DLQ" />
+	<queue physicalName="EPNEvents" />
+    <queue physicalName="SF.GOEP.AP.TO.CI.AUDITING" />
+	<topic physicalName="EPNNotifications" />
+</destinations>

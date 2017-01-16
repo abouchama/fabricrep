@@ -1,0 +1,5 @@
+<dynamicallyIncludedDestinations>
+	<queue physicalName="SF.GOEP.CI.TO.AP.>" />
+	<queue physicalName="SF.GOEP.AP.TO.CI.>" />
+	<queue physicalName="SF.GOEP.LI.TO.CI.>" />
+</dynamicallyIncludedDestinations>

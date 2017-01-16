@@ -1,0 +1,154 @@
+<!--
+
+     Copyright 2005-2014 Red Hat, Inc.
+
+     Red Hat licenses this file to you under the Apache License, version
+     2.0 (the "License"); you may not use this file except in compliance
+     with the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+     implied.  See the License for the specific language governing
+     permissions and limitations under the License.
+
+-->
+<!DOCTYPE beans [ 
+<!ENTITY destinations SYSTEM "mvel:profile:destinationsAP.xml"> 
+<!ENTITY sfcidestinations SYSTEM "mvel:profile:sfcidestinationsAP.xml"> 
+]>
+
+
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:amq="http://activemq.apache.org/schema/core"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <!-- Allows us to use system properties and fabric as variables in this configuration file -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <bean class="io.fabric8.mq.fabric.ConfigurationProperties"/>
+        </property>
+    </bean>
+
+		<broker xmlns="http://activemq.apache.org/schema/core"
+            brokerName="${broker-name}"
+            dataDirectory="${data}"
+            start="false" 
+                        restartAllowed="false"
+                        brokerId="${brokerId}"
+                        persistent="${brokerPersistent}"
+                        networkConnectorStartAsync="${networkConnectorStartAsync}">
+		&destinations;
+        <destinationPolicy>
+                        <policyMap>
+                                <policyEntries>
+                   <policyEntry queue=">" optimizedDispatch="true" memoryLimit="300mb" >
+                        <networkBridgeFilterFactory>
+                             <conditionalNetworkBridgeFilterFactory replayWhenNoConsumers="true" />
+                        </networkBridgeFilterFactory>
+                   </policyEntry>
+                                </policyEntries>
+                        </policyMap>
+        </destinationPolicy>
+        <managementContext>
+            <managementContext createConnector="false"/>
+        </managementContext>
+
+      <persistenceAdapter>
+            <kahaDB directory="${data}/kahadb" ignoreMissingJournalfiles="true" checkForCorruptJournalFiles="true" checksumJournalFiles="true">
+            </kahaDB>
+        </persistenceAdapter>	
+
+        <!--plugins>
+		<loggingBrokerPlugin logConnectionEvents="true" logInternalEvents="true" logProducerEvents="false" logConsumerEvents="false" />
+                        <jaasAuthenticationPlugin configuration="karaf" />
+                        <authorizationPlugin>
+                                <map>
+                                        <authorizationMap groupClass="org.apache.karaf.jaas.boot.principal.RolePrincipal">
+                                                <authorizationEntries>
+                                                  <authorizationEntry queue=">"
+                                                                                          read="consumers"
+                                                                                          write="producers"
+                                                                                          admin="admins" />
+                                                 <authorizationEntry topic=">"
+                                                                                          read="consumers"
+                                                                                          write="producers"
+                                                                                          admin="admins"/>
+                                                  <authorizationEntry topic="ActiveMQ.Advisory.>"
+                                                           read="consumers"
+                                                           write="producers"
+                                                           admin="admins,consumers,producers"/>
+                                                </authorizationEntries>
+                                                <tempDestinationAuthorizationEntry>
+                                                        <tempDestinationAuthorizationEntry
+                                                                                          read="admins"
+                                                                                          write="admins"
+                                                                                          admin="admins"/>
+                                                </tempDestinationAuthorizationEntry>
+                                        </authorizationMap>
+                                </map>
+                        </authorizationPlugin>
+        </plugins-->
+        <systemUsage>
+            <systemUsage sendFailIfNoSpace="true" sendFailIfNoSpaceAfterTimeout="3000">
+                <memoryUsage>
+                    <memoryUsage limit="${memoryUsageLimit}"/>
+                </memoryUsage>
+                <storeUsage>
+                    <storeUsage limit="${storeUsageLimit}"/>
+                </storeUsage>
+                <tempUsage>
+                    <tempUsage limit="${tempUsageLimit}"/>
+                </tempUsage>
+            </systemUsage>
+        </systemUsage>
+         <!--networkConnectors>
+
+
+                <networkConnector 
+                                                  name="${networkConnector_to_CI_1_name}" 
+                                                  uri="${networkConnector_to_CI_1_uri}"
+                                                  duplex="true"
+                                                  messageTTL="3"
+                                                  consumerTTL="1"
+                                                  conduitSubscriptions="false"
+                                                  userName="${networkConnector_user}"
+                                                  password="${networkConnector_pass}">
+                        &sfcidestinations;
+            </networkConnector>
+
+                <networkConnector 
+                                                  name="${networkConnector_to_CI_2_name}" 
+                                                  uri="${networkConnector_to_CI_2_uri}"
+                                                  duplex="true"
+                                                  messageTTL="3"
+                                                  consumerTTL="1"
+                                                  conduitSubscriptions="false"
+                                                  userName="${networkConnector_user}"
+                                                  password="${networkConnector_pass}">
+                        &sfcidestinations;
+            </networkConnector>
+                <networkConnector 
+                                name="${networkConnector_to_local_name}" 
+                                uri="${networkConnector_to_local_uri}"
+                                userName="${networkConnector_user}"
+                                password="${networkConnector_pass}"
+                                conduitSubscriptions="false"
+                                messageTTL="3"
+                                consumerTTL="1" >
+                        </networkConnector>
+                </networkConnectors-->
+
+        <transportConnectors>
+            		<transportConnector name="${transportConnector1_name}" uri="${transportConnector1_uri}"/>
+                        <transportConnector name="${transportConnector2_name}" uri="${transportConnector2_uri}"/>
+        </transportConnectors>
+    </broker>
+
+</beans>
+
