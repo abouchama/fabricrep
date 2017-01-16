@@ -16,8 +16,8 @@
 
 -->
 <!DOCTYPE beans [ 
-<!ENTITY destinations SYSTEM "mvel:profile:destinationsAP.xml"> 
-<!ENTITY sfcidestinations SYSTEM "mvel:profile:sfcidestinationsAP.xml"> 
+<!ENTITY destinations SYSTEM "profile:destinationsAP.xml"> 
+<!ENTITY sfcidestinations SYSTEM "profile:sfcidestinationsAP.xml"> 
 ]>
 
 
