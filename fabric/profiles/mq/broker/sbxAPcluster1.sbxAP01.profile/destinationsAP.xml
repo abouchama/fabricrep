@@ -1,4 +1,5 @@
 <destinations>
+   <queue physicalName="Audit.test" />
 	<queue physicalName="ActiveMQ.DLQ" />
 	<queue physicalName="EPNEvents" />
 	<queue physicalName="SF.GOEP.CI.TO.AP.I002" />
